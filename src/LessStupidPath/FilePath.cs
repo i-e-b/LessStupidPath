@@ -17,20 +17,6 @@ namespace System.IO
 			_rooted = IsRooted(input);
 	    }
 
-	    static bool IsRooted(string input)
-		{
-			return (input.Length >= 1
-				&& (input[0] == Path.DirectorySeparatorChar || input[0] == Path.AltDirectorySeparatorChar)) 
-				
-				|| (input.Length >= 2 && input[1] == Path.VolumeSeparatorChar);
-		}
-
-	    protected FilePath(IEnumerable<string> orderedElements, bool rooted)
-	    {
-			_parts = orderedElements.ToList();
-		    _rooted = rooted;
-	    }
-
 	    /// <summary> Append 'right' to this path, ignoring navigation semantics </summary>
 	    public FilePath Append(FilePath right)
 	    {
@@ -42,6 +28,12 @@ namespace System.IO
 	    {
 			if (navigation._rooted) return navigation.Normalise();
 			return new FilePath(_parts.Concat(navigation._parts), _rooted).Normalise();
+	    }
+
+		/// <summary> Remove a common root from this path and return a relative path </summary>
+	    public FilePath Unroot(FilePath root)
+	    {
+		    return null;
 	    }
 
 		/// <summary> Remove single dots, remove path elements for double dots. </summary>
@@ -93,7 +85,8 @@ namespace System.IO
 				? string.Join("\\", WindowsDriveSpecOrFolder(), string.Join("\\", _parts.Skip(1)))
 				: string.Join("\\", _parts);
 	    }
-
+		
+		/// <summary> Returns a string representation of the path using path separators for the current execution environment </summary>
 		public string ToEnvironmentalPath()
 		{
 			return PosixOS() ? ToPosixPath() : ToWindowsPath();
@@ -117,5 +110,19 @@ namespace System.IO
 			return new FilePath(src);
 		}
 
+
+	    static bool IsRooted(string input)
+		{
+			return (input.Length >= 1
+				&& (input[0] == Path.DirectorySeparatorChar || input[0] == Path.AltDirectorySeparatorChar)) 
+				
+				|| (input.Length >= 2 && input[1] == Path.VolumeSeparatorChar);
+		}
+
+	    protected FilePath(IEnumerable<string> orderedElements, bool rooted)
+	    {
+			_parts = orderedElements.ToList();
+		    _rooted = rooted;
+	    }
     }
 }
