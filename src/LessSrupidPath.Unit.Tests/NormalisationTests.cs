@@ -22,7 +22,6 @@ namespace LessStupidPath.Unit.Tests
 				Is.EqualTo(expected)
 				);
 		}
-
 		
 		[Test]
 		[TestCase("","")]

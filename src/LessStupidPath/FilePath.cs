@@ -17,6 +17,19 @@ namespace System.IO
 			_rooted = Path.IsPathRooted(input);
 	    }
 
+	    protected FilePath(IEnumerable<string> orderedElements, bool rooted)
+	    {
+			_parts = orderedElements.ToList();
+		    _rooted = rooted;
+	    }
+
+		/// <summary> Append 'right' to this path, ignoring navigation semantics </summary>
+	    public FilePath Append(FilePath right)
+	    {
+		    return new FilePath(_parts.Concat(right._parts), _rooted);
+	    }
+
+		/// <summary> Returns a string representation of the path using Posix path separators </summary>
 	    public string ToPosixPath()
 	    {
 		    return (_rooted) 
@@ -24,6 +37,7 @@ namespace System.IO
 				: string.Join("/", _parts);
 	    }
 
+		/// <summary> Returns a string representation of the path using Windows path separators </summary>
 	    public string ToWindowsPath()
 	    {
 		    return (_rooted) 
@@ -48,5 +62,10 @@ namespace System.IO
 			if (_parts[0].Length == 1) return _parts[0] + ":";
 		    return "\\" + _parts.First();
 	    }
+
+		public static explicit operator FilePath(string src)
+		{
+			return new FilePath(src);
+		}
     }
 }
