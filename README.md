@@ -1,4 +1,4 @@
 LessStupidPath
 ==============
 
-Like .Net's 'Path' class, but no retarded.
+Like .Net's 'Path' class, but not retarded.
