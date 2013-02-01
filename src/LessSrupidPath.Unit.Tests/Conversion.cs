@@ -12,5 +12,12 @@ namespace LessStupidPath.Unit.Tests
 			var result = (FilePath)"Example/Path";
 			Assert.That(result.ToPosixPath(), Is.EqualTo("Example/Path"));
 		}
+
+		[Test]
+		public void cant_implicitly_cast_from_string ()
+		{
+			object x = "hello";
+			Assert.That(x as FilePath, Is.Null);
+		}
 	}
 }

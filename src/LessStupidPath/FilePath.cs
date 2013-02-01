@@ -29,6 +29,12 @@ namespace System.IO
 		    return new FilePath(_parts.Concat(right._parts), _rooted);
 	    }
 
+		/// <summary> Append 'right' to this path, obeying standard navigation semantics </summary>
+	    public FilePath Navigate(FilePath right)
+	    {
+		    return null;
+	    }
+
 		/// <summary> Returns a string representation of the path using Posix path separators </summary>
 	    public string ToPosixPath()
 	    {
@@ -67,5 +73,6 @@ namespace System.IO
 		{
 			return new FilePath(src);
 		}
+
     }
 }
