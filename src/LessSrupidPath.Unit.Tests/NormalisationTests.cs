@@ -1,43 +1,44 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using NUnit.Framework;
 
 namespace LessStupidPath.Unit.Tests
 {
 	[TestFixture]
-    public class NormalisationTests
-    {
+	public class NormalisationTests
+	{
 		[Test]
-		[TestCase("","")]
-		[TestCase("relative\\path","relative/path")]
-		[TestCase("C:\\absolute\\path","/C/absolute/path")] // iffy case
-		[TestCase("\\absolute\\path","/absolute/path")]
-		[TestCase("/absolute/path","/absolute/path")]
-		[TestCase("mixed\\case/path","mixed/case/path")]
-		[TestCase("too///many\\\\slashes","too/many/slashes")]
-		[TestCase("final/slash/","final/slash")]
-		public void can_normalise_to_posix_path (string input, string expected)
+		[TestCase("../one/of/two/..","../one/of")]
+		[TestCase("../one/./two/..","../one")]
+		[TestCase("/one/./two/../..","/")]
+		[TestCase("one/./two/../..","")]
+		[TestCase("./one","one")]
+		public void normalising_a_path_removes_dot_specs_where_possible (string input, string expected)
 		{
 			Assert.That(
-				new FilePath(input).ToPosixPath(),
+				new FilePath(input).Normalise().ToPosixPath(),
 				Is.EqualTo(expected)
 				);
 		}
+
 		
 		[Test]
-		[TestCase("","")]
-		[TestCase("relative\\path","relative\\path")]
-		[TestCase("C:\\absolute\\path","C:\\absolute\\path")] // iffy case
-		[TestCase("\\absolute\\path","\\absolute\\path")]
-		[TestCase("/absolute/path","\\absolute\\path")]
-		[TestCase("mixed\\case/path","mixed\\case\\path")]
-		[TestCase("too///many\\\\slashes","too\\many\\slashes")]
-		[TestCase("final/slash/","final\\slash")]
-		public void can_normalise_to_windows_path (string input, string expected)
+		[TestCase("who/.../would./.make/a/.p.a.t.h/like../.../this?")]
+		public void normalising_a_path_ignores_elements_other_than_single_and_double_dots (string crazyPath)
 		{
 			Assert.That(
-				new FilePath(input).ToWindowsPath(),
-				Is.EqualTo(expected)
+				new FilePath(crazyPath).Normalise().ToPosixPath(),
+				Is.EqualTo(crazyPath)
 				);
 		}
-    }
+
+		
+		[Test]
+		public void normalising_an_invalid_rooted_path_throws_an_exception ()
+		{
+			Assert.Throws<InvalidOperationException>(() =>
+				new FilePath("/very/../../../wrong").Normalise()
+				);
+		}
+	}
 }

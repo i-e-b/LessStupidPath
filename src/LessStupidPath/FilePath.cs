@@ -14,8 +14,16 @@ namespace System.IO
 			_parts = new List<string>(
 				input.Split(new []{Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar, Path.PathSeparator, Path.VolumeSeparatorChar}, StringSplitOptions.RemoveEmptyEntries)
 				);
-			_rooted = Path.IsPathRooted(input);
+			_rooted = IsRooted(input);
 	    }
+
+	    static bool IsRooted(string input)
+		{
+			return (input.Length >= 1
+				&& (input[0] == Path.DirectorySeparatorChar || input[0] == Path.AltDirectorySeparatorChar)) 
+				
+				|| (input.Length >= 2 && input[1] == Path.VolumeSeparatorChar);
+		}
 
 	    protected FilePath(IEnumerable<string> orderedElements, bool rooted)
 	    {
@@ -23,19 +31,54 @@ namespace System.IO
 		    _rooted = rooted;
 	    }
 
-		/// <summary> Append 'right' to this path, ignoring navigation semantics </summary>
+	    /// <summary> Append 'right' to this path, ignoring navigation semantics </summary>
 	    public FilePath Append(FilePath right)
 	    {
 		    return new FilePath(_parts.Concat(right._parts), _rooted);
 	    }
 
 		/// <summary> Append 'right' to this path, obeying standard navigation semantics </summary>
-	    public FilePath Navigate(FilePath right)
+	    public FilePath Navigate(FilePath navigation)
 	    {
-		    return null;
+			if (navigation._rooted) return navigation.Normalise();
+			return new FilePath(_parts.Concat(navigation._parts), _rooted).Normalise();
 	    }
 
-		/// <summary> Returns a string representation of the path using Posix path separators </summary>
+		/// <summary> Remove single dots, remove path elements for double dots. </summary>
+	    public FilePath Normalise()
+	    {
+			var result = new List<string>();
+			uint leading = 0;
+
+			for (int index = _parts.Count - 1; index >= 0; index--)
+			{
+				var part = _parts[index];
+				if (part == ".") continue;
+				if (part == "..")
+				{
+					leading++;
+					continue;
+				}
+
+				if (leading > 0)
+				{
+					leading--;
+					continue;
+				}
+				result.Insert(0, part);
+			}
+
+			if (_rooted && leading > 0) throw new InvalidOperationException("Tried to navigate before path root");
+
+			for (int i = 0; i < leading; i++)
+			{
+				result.Insert(0, "..");
+			}
+
+			return new FilePath(result, _rooted);
+	    }
+
+	    /// <summary> Returns a string representation of the path using Posix path separators </summary>
 	    public string ToPosixPath()
 	    {
 		    return (_rooted) 

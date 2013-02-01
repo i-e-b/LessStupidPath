@@ -42,6 +42,7 @@
     <Compile Include="Conversion.cs" />
     <Compile Include="NavigatingTests.cs" />
     <Compile Include="NormalisationTests.cs" />
+    <Compile Include="PlatformOutputTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -10,8 +10,8 @@ namespace LessStupidPath.Unit.Tests
 		[Test]
 		[TestCase("/home/john/", "/files", "/files")]
 		[TestCase("c:\\temp\files", "c:\\files", "/c/files")]
-		[TestCase("john/", "/files", "john/files")]
-		[TestCase("john", "/files", "john/files")]
+		[TestCase("john/", "/files", "/files")]
+		[TestCase("john", "/files", "/files")]
 		[TestCase("john", "files", "john/files")]
 		public void navigating_to_leading_slashes_reroots_the_path (string left, string right, string expected)
 		{
@@ -26,7 +26,7 @@ namespace LessStupidPath.Unit.Tests
 		[TestCase("/home/john/", "../files", "/home/files")]
 		[TestCase("john/", "../files", "files")]
 		[TestCase("/home", "../files", "/files")] // note the rooting!
-		[TestCase("john/..", "../files", "john/../../files")]
+		[TestCase("john/..", "../files", "../files")]
 		public void navigating_obeys_all_double_dots (string left, string right, string expected)
 		{
 			Assert.That(
