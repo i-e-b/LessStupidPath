@@ -49,6 +49,12 @@ namespace System.IO
 			for (common = 0; common < shorter; common ++)
 				if (_parts[common] != source._parts[common]) break;
 
+			if (common == 0)
+			{
+				if (_rooted) return this;
+				return source.Navigate(this);
+			}
+
 			int differences = shorter - common;
 
 			var result = new List<string>();
