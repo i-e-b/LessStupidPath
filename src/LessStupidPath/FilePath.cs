@@ -33,7 +33,13 @@ namespace System.IO
 		/// <summary> Remove a common root from this path and return a relative path </summary>
 	    public FilePath Unroot(FilePath root)
 	    {
-		    return null;
+		    var result = new List<string>();
+			for (int i = 0; i < root._parts.Count; i++)
+			{
+				if (_parts.Count <= i) throw new InvalidOperationException("Root supplied is longer than full path");
+				if (_parts[i] != root._parts[i]) throw new InvalidOperationException("Full path is not a subpath of root");
+			}
+			return new FilePath(_parts.Skip(root._parts.Count), false);
 	    }
 
 		/// <summary> Remove single dots, remove path elements for double dots. </summary>
