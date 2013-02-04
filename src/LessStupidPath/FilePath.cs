@@ -112,8 +112,15 @@ namespace System.IO
 		public string ToWindowsPath()
 		{
 			return (_rooted)
-				? string.Join("\\", WindowsDriveSpecOrFolder(), string.Join("\\", _parts.Skip(1)))
+				? RootedWindowsPath()
 				: string.Join("\\", _parts);
+		}
+
+		string RootedWindowsPath()
+		{
+			if (_parts.Count < 2) return "\\" + WindowsDriveSpecOrFolder();
+
+			return string.Join("\\", WindowsDriveSpecOrFolder(), string.Join("\\", _parts.Skip(1)));
 		}
 
 		/// <summary> Returns a string representation of the path using path separators for the current execution environment </summary>
@@ -155,5 +162,18 @@ namespace System.IO
 			_rooted = rooted;
 		}
 
+		public string Extension()
+		{
+			var fullPath = ToEnvironmentalPath();
+			if (DirectorySeperatorAfterDot(fullPath))
+				throw new InvalidOperationException(string.Format("{0} does not have an extension", fullPath));
+			return fullPath.Substring(fullPath.LastIndexOf(".")+1).ToLower();
+		}
+
+		bool DirectorySeperatorAfterDot(string fullPath)
+		{
+			return fullPath.LastIndexOf("\\") > fullPath.LastIndexOf(".") || 
+				fullPath.LastIndexOf("/") > fullPath.LastIndexOf(".");
+		}
 	}
 }
