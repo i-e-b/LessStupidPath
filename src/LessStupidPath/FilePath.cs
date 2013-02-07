@@ -162,18 +162,25 @@ namespace System.IO
 			_rooted = rooted;
 		}
 
+// ReSharper disable StringLastIndexOfIsCultureSpecific.1
 		public string Extension()
 		{
 			var fullPath = ToEnvironmentalPath();
 			if (DirectorySeperatorAfterDot(fullPath))
-				throw new InvalidOperationException(string.Format("{0} does not have an extension", fullPath));
+				throw new InvalidOperationException(fullPath+" does not have an extension");
 			return fullPath.Substring(fullPath.LastIndexOf(".")+1).ToLower();
 		}
 
-		bool DirectorySeperatorAfterDot(string fullPath)
+		static bool DirectorySeperatorAfterDot(string fullPath)
 		{
 			return fullPath.LastIndexOf("\\") > fullPath.LastIndexOf(".") || 
 				fullPath.LastIndexOf("/") > fullPath.LastIndexOf(".");
+		}
+// ReSharper restore StringLastIndexOfIsCultureSpecific.1
+
+		public string LastElement()
+		{
+            return _parts.LastOrDefault();
 		}
 	}
 }

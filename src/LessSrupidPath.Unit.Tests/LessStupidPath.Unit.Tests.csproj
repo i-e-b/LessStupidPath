@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="AppendingPathsTests.cs" />
     <Compile Include="Conversion.cs" />
+    <Compile Include="LastElementTests.cs" />
     <Compile Include="ExtensionTests.cs" />
     <Compile Include="NavigatingTests.cs" />
     <Compile Include="NormalisationTests.cs" />
