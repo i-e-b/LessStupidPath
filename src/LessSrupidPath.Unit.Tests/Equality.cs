@@ -12,6 +12,7 @@ namespace LessStupidPath.Unit.Tests
 		public void are_equal(string left, string right)
 		{
 			Assert.That(new FilePath(left), Is.EqualTo(new FilePath(right)));
+			Assert.That(new FilePath(left) == new FilePath(right));
 		}
 
 		[Test]
@@ -20,6 +21,7 @@ namespace LessStupidPath.Unit.Tests
 		public void not_equal(string left, string right)
 		{
 			Assert.That(new FilePath(left), Is.Not.EqualTo(new FilePath(right)));
+			Assert.That(new FilePath(left) != new FilePath(right));
 		}
 	}
 }

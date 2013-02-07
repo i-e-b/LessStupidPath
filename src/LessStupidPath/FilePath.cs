@@ -5,6 +5,7 @@ namespace System.IO
 {
 	public class FilePath : IEquatable<FilePath>
 	{
+
 		readonly List<string> _parts;
 		readonly bool _rooted;
 
@@ -142,18 +143,6 @@ namespace System.IO
 			return "\\" + _parts.First();
 		}
 
-		public static explicit operator FilePath(string src)
-		{
-			return new FilePath(src);
-		}
-
-		public bool Equals(FilePath other)
-		{
-			return Normalise().ToPosixPath() == other.Normalise().ToPosixPath();
-		}
-
-		public override string ToString() { return ToPosixPath(); }
-
 		static bool IsRooted(string input)
 		{
 			return (input.Length >= 1
@@ -188,5 +177,47 @@ namespace System.IO
 		{
             return _parts.LastOrDefault();
 		}
+
+		#region Operators, equality and other such fluff
+		public static explicit operator FilePath(string src)
+		{
+			return new FilePath(src);
+		}
+
+		public bool Equals(FilePath other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return Normalise().ToPosixPath() == other.Normalise().ToPosixPath();
+		}
+
+		public override string ToString() { return ToPosixPath(); }
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != GetType()) return false;
+			return Equals((FilePath) obj);
+		}
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return ((_parts != null ? _parts.GetHashCode() : 0)*397) ^ _rooted.GetHashCode();
+			}
+		}
+		public static bool operator ==(FilePath a, FilePath b)
+		{
+			if (ReferenceEquals(a, b)) return true;
+			if (((object)a == null) || ((object)b == null)) return false;
+			return a.Normalise().ToPosixPath() == b.Normalise().ToPosixPath();
+		}
+
+		public static bool operator !=(FilePath a, FilePath b)
+		{
+			return !(a == b);
+		}
+		#endregion
 	}
 }
