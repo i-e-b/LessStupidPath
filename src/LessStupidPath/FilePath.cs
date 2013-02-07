@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace System.IO
 {
-	public class FilePath
+	public class FilePath : IEquatable<FilePath>
 	{
 		readonly List<string> _parts;
 		readonly bool _rooted;
@@ -113,7 +113,7 @@ namespace System.IO
 		{
 			return (_rooted)
 				? RootedWindowsPath()
-				: string.Join("\\", _parts);
+				: string.Join("\\", Normalise()._parts);
 		}
 
 		string RootedWindowsPath()
@@ -147,6 +147,12 @@ namespace System.IO
 			return new FilePath(src);
 		}
 
+		public bool Equals(FilePath other)
+		{
+			return Normalise().ToPosixPath() == other.Normalise().ToPosixPath();
+		}
+
+		public override string ToString() { return ToPosixPath(); }
 
 		static bool IsRooted(string input)
 		{
