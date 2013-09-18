@@ -9,6 +9,7 @@ namespace LessStupidPath.Unit.Tests
 		[Test]
 		[TestCase("a/b/c", "a\\b\\c")]
 		[TestCase("one/../two", "two")]
+		[TestCase(@"c:\path\to", @"c:\path\to")]
 		public void are_equal(string left, string right)
 		{
 			Assert.That(new FilePath(left), Is.EqualTo(new FilePath(right)));

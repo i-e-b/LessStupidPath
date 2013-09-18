@@ -40,7 +40,10 @@
   <ItemGroup>
     <Compile Include="AppendingPathsTests.cs" />
     <Compile Include="Conversion.cs" />
+    <Compile Include="EmptyPathTests.cs" />
     <Compile Include="Equality.cs" />
+    <Compile Include="FileNameTests.cs" />
+    <Compile Include="FileNameWithExtensionTests.cs" />
     <Compile Include="LastElementTests.cs" />
     <Compile Include="ExtensionTests.cs" />
     <Compile Include="NavigatingTests.cs" />
@@ -48,6 +51,7 @@
     <Compile Include="PlatformOutputTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RelativeToTests.cs" />
+    <Compile Include="RootedTests.cs" />
     <Compile Include="UnrootingTests.cs" />
   </ItemGroup>
   <ItemGroup>

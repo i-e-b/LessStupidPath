@@ -42,5 +42,15 @@ namespace LessStupidPath.Unit.Tests
 				Is.EqualTo(expected)
 				);
 		}
+
+		[Test]
+		[TestCase("", "C:\\temp\\file.txt", "C:\\temp\\file.txt")]
+		public void appending_rooted_path_to_empty_path_gives_rooted_path(string left, string right, string expected)
+		{
+			Assert.That(
+				new FilePath(left).Append((FilePath)right).ToWindowsPath(),
+				Is.EqualTo(expected)
+				);
+		}
 	}
 }
