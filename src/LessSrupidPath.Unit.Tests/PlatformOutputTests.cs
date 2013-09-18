@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using NUnit.Framework;
 
 namespace LessStupidPath.Unit.Tests
@@ -38,6 +39,19 @@ namespace LessStupidPath.Unit.Tests
 		{
 			Assert.That(
 				new FilePath(input).ToWindowsPath(),
+				Is.EqualTo(expected)
+				);
+		}
+
+		[Test]
+		public void can_get_a_path_without_filename()
+		{
+			var p = (int)Environment.OSVersion.Platform;
+			var posix = (p == 4) || (p == 6) || (p == 128);
+			var expected = posix ? "/path/to":@"c:\path\to";
+
+			Assert.That(
+				new FilePath(@"c:\path\to\file.txt").ToEnvironmentalPathWithoutFileName(),
 				Is.EqualTo(expected)
 				);
 		}
