@@ -5,9 +5,9 @@ namespace System.IO
 {
 	public class FilePath : IEquatable<FilePath>
 	{
-
 		readonly List<string> _parts;
 		readonly bool _rooted;
+		readonly bool _empty;
 
 		/// <summary> Create a file path from a path string </summary>
 		public FilePath(string input)
@@ -16,12 +16,13 @@ namespace System.IO
 				input.Split(new[] { '/', '\\', ':' }, StringSplitOptions.RemoveEmptyEntries)
 				);
 			_rooted = IsRooted(input);
+			_empty = string.IsNullOrWhiteSpace(input);
 		}
 
 		/// <summary> Append 'right' to this path, ignoring navigation semantics </summary>
 		public FilePath Append(FilePath right)
 		{
-			return new FilePath(_parts.Concat(right._parts), _rooted);
+			return _empty ? right : new FilePath(_parts.Concat(right._parts), _rooted);
 		}
 
 		/// <summary> Append 'right' to this path, obeying standard navigation semantics </summary>
@@ -101,6 +102,14 @@ namespace System.IO
 			return new FilePath(result, _rooted);
 		}
 
+		/// <summary>
+		/// Returns true if the path specified was empty, false otherwise
+		/// </summary>
+		public bool IsEmpty()
+		{
+			return _empty;
+		}
+
 		/// <summary> Returns a string representation of the path using Posix path separators </summary>
 		public string ToPosixPath()
 		{
@@ -143,7 +152,7 @@ namespace System.IO
 			return "\\" + _parts.First();
 		}
 
-		static bool IsRooted(string input)
+		public static bool IsRooted(string input)
 		{
 			return (input.Length >= 1
 				&& (input[0] == '/' || input[0] == '\\'))
@@ -176,6 +185,20 @@ namespace System.IO
 		public string LastElement()
 		{
             return _parts.LastOrDefault();
+		}
+
+		public string FileNameWithoutExtension()
+		{
+			var fileNameWithExtension = _parts.Last();
+
+			var lastIndexOf = fileNameWithExtension.LastIndexOf(Extension(), StringComparison.Ordinal);
+
+			return fileNameWithExtension.Substring(0, lastIndexOf - 1);
+		}
+
+		public string FileNameWithExtension()
+		{
+			return FileNameWithoutExtension() + "." + Extension();
 		}
 
 		#region Operators, equality and other such fluff
