@@ -133,6 +133,12 @@ namespace System.IO
 			return string.Join("\\", WindowsDriveSpecOrFolder(), string.Join("\\", _parts.Skip(1)));
 		}
 
+		public string ToEnvironmentalPathWithoutFileName()
+		{
+			var path = ToEnvironmentalPath();
+			return path.Substring(0, path.Count() - FileNameWithExtension().Count() - 1);
+		}
+
 		/// <summary> Returns a string representation of the path using path separators for the current execution environment </summary>
 		public string ToEnvironmentalPath()
 		{
