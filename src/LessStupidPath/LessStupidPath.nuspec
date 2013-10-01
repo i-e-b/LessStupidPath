@@ -13,4 +13,7 @@
     <copyright>Copyright 2013</copyright>
     <tags>file path system io</tags>
   </metadata>
+  <files>
+    <file src="bin\Release\*.pdb" target="lib\net40"/>
+  </files>
 </package>
