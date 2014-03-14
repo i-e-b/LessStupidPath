@@ -7,6 +7,7 @@ namespace LessStupidPath.Unit.Tests
 	public class RelativeToTests
 	{
 		[Test]
+        [TestCase("/home/john/files/moreFiles/testFiles", "/home/marge/files", "../../../../marge/files")]
 		[TestCase("/home/john/files", "/home/marge/files", "../../marge/files")]
 		[TestCase("/srv/widget/files", "/srv/widget/files/myfile.txt", "myfile.txt")]
 		[TestCase("/srv/widget/files", "/srv/widget/files/logs/today.txt", "logs/today.txt")]

@@ -57,7 +57,7 @@ namespace System.IO
 				return source.Navigate(this);
 			}
 
-			int differences = shorter - common;
+            int differences = source._parts.Count - common;
 
 			var result = new List<string>();
 			for (int i = 0; i < differences; i++)
