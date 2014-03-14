@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace System.IO
 {
+    /// <summary>
+    /// File path object. Converts between paths and strings, and performs path manipulation
+    /// </summary>
 	public class FilePath : IEquatable<FilePath>
 	{
 		readonly List<string> _parts;
@@ -133,6 +136,9 @@ namespace System.IO
 			return string.Join("\\", WindowsDriveSpecOrFolder(), string.Join("\\", _parts.Skip(1)));
 		}
 
+        /// <summary>
+        /// Returns a string representation of the directories of the path using separators for the current execution environment
+        /// </summary>
 		public string ToEnvironmentalPathWithoutFileName()
 		{
 			var path = ToEnvironmentalPath();
@@ -158,6 +164,10 @@ namespace System.IO
 			return "\\" + _parts.First();
 		}
 
+        /// <summary>
+        /// Returns true if the path string has a root element (such as `/` or `C:\`)
+        /// <para>Return false if the path string is relative</para>
+        /// </summary>
 		public static bool IsRooted(string input)
 		{
 			return (input.Length >= 1
@@ -166,6 +176,9 @@ namespace System.IO
 				|| (input.Length >= 2 && input[1] == ':');
 		}
 
+        /// <summary>
+        /// Build a file path from elements and a root flag
+        /// </summary>
 		protected FilePath(IEnumerable<string> orderedElements, bool rooted)
 		{
 			_parts = orderedElements.ToList();
@@ -173,6 +186,10 @@ namespace System.IO
 		}
 
 // ReSharper disable StringLastIndexOfIsCultureSpecific.1
+        /// <summary>
+        /// Returns the extension of a file, not including the `.`
+        /// <para>Throws InvalidOperationException if the file has no extension</para>
+        /// </summary>
 		public string Extension()
 		{
 			var fullPath = ToEnvironmentalPath();
@@ -188,11 +205,18 @@ namespace System.IO
 		}
 // ReSharper restore StringLastIndexOfIsCultureSpecific.1
 
+        /// <summary>
+        /// Returns the last element of the path (either directory or file)
+        /// </summary>
 		public string LastElement()
 		{
             return _parts.LastOrDefault();
 		}
 
+        /// <summary>
+        /// Returns the last element of the path, with the last extension removed
+        /// <para>(i.e. `../dir/file.exe.old` becomes `file.exe`; `myfile.txt` becomes `myfile`)</para>
+        /// </summary>
 		public string FileNameWithoutExtension()
 		{
 			var fileNameWithExtension = _parts.Last();
@@ -202,17 +226,27 @@ namespace System.IO
 			return fileNameWithExtension.Substring(0, lastIndexOf - 1);
 		}
 
+        /// <summary>
+        /// Returns the last element of the path, with extension.
+        /// <para>Throws InvalidOperationException if the file has no extension</para>
+        /// </summary>
 		public string FileNameWithExtension()
 		{
 			return FileNameWithoutExtension() + "." + Extension();
 		}
 
 		#region Operators, equality and other such fluff
+        /// <summary>
+        /// Convert a string path to a `FilePath`
+        /// </summary>
 		public static explicit operator FilePath(string src)
 		{
 			return new FilePath(src);
 		}
 
+        /// <summary>
+        /// Equality
+        /// </summary>
 		public bool Equals(FilePath other)
 		{
 			if (ReferenceEquals(null, other)) return false;
@@ -220,8 +254,14 @@ namespace System.IO
 			return Normalise().ToPosixPath() == other.Normalise().ToPosixPath();
 		}
 
+        /// <summary>
+        /// Returns a posix path version of the FilePath
+        /// </summary>
 		public override string ToString() { return ToPosixPath(); }
 
+        /// <summary>
+        /// Equality
+        /// </summary>
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
@@ -229,6 +269,9 @@ namespace System.IO
 			if (obj.GetType() != GetType()) return false;
 			return Equals((FilePath) obj);
 		}
+        /// <summary>
+        /// Equality
+        /// </summary>
 		public override int GetHashCode()
 		{
 			unchecked
@@ -236,6 +279,9 @@ namespace System.IO
 				return ((_parts != null ? _parts.GetHashCode() : 0)*397) ^ _rooted.GetHashCode();
 			}
 		}
+        /// <summary>
+        /// Equality
+        /// </summary>
 		public static bool operator ==(FilePath a, FilePath b)
 		{
 			if (ReferenceEquals(a, b)) return true;
@@ -243,6 +289,9 @@ namespace System.IO
 			return a.Normalise().ToPosixPath() == b.Normalise().ToPosixPath();
 		}
 
+        /// <summary>
+        /// Inequality
+        /// </summary>
 		public static bool operator !=(FilePath a, FilePath b)
 		{
 			return !(a == b);
