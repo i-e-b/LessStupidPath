@@ -47,29 +47,31 @@ namespace System.IO
 		}
 
 		/// <summary> Returns a minimal relative path from source to current path </summary>
-		public FilePath RelativeTo(FilePath source)
-		{
-			int shorter = Math.Min(_parts.Count, source._parts.Count);
-			int common;
-			for (common = 0; common < shorter; common++)
-				if (_parts[common] != source._parts[common]) break;
+		        public FilePath RelativeTo(FilePath source)
+        {
+            if (_parts.Count == 1 && source._parts.Count == 1) return this;
+            var shorter = Math.Min(_parts.Count, source._parts.Count);
+            int common;
+            for (common = 0; common < shorter; common++)
+                if (_parts[common] != source._parts[common]) break;
 
-			if (common == 0)
-			{
-				if (_rooted) return this;
-				return source.Navigate(this);
-			}
+            if (common == 0)
+            {
+                if (_rooted) return this;
+                return source.Navigate(this);
+            }
 
-            int differences = source._parts.Count - common;
+            var differences = source._parts.Count - common;
+            if (differences == 0) return new FilePath(_parts.Last()); // same path
 
-			var result = new List<string>();
-			for (int i = 0; i < differences; i++)
-				result.Add("..");
+            var result = new List<string>();
+            for (var i = 1; i < differences; i++)
+                result.Add("..");
 
-			result.AddRange(_parts.Skip(common));
+            result.AddRange(_parts.Skip(common));
 
-			return new FilePath(result, false);
-		}
+            return new FilePath(result, false);
+        }
 
 		/// <summary> Remove single dots, remove path elements for double dots. </summary>
 		public FilePath Normalise()
